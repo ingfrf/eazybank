@@ -4,10 +4,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class AccountController {
+public class BalanceController {
 
-    @GetMapping("/myAccount")
-    public String getAccountDetails() {
-        return "Here are the account details from the DB";
+    @GetMapping("/myBalance")
+    public String getBalanceDetails() {
+        return "Here are the balance details from the DB";
     }
 }
