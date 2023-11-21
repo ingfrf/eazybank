@@ -5,10 +5,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 import javax.sql.DataSource;
@@ -29,10 +27,12 @@ public class ProjectSecurityConfig {
                 .and().httpBasic()
                 .build()
         ;*/
-        return httpSecurity.authorizeHttpRequests(authz ->
+        return httpSecurity
+                .csrf().disable()
+                .authorizeHttpRequests(authz ->
                         authz
                                 .requestMatchers("/myAccount", "/myBalance", "/myLoans", "/myCards").authenticated()
-                                .requestMatchers("/notices", "/contact").permitAll()
+                                .requestMatchers("/notices", "/contact", "/register").permitAll()
                 )
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
@@ -56,12 +56,12 @@ public class ProjectSecurityConfig {
                 .build();
 
         return new InMemoryUserDetailsManager(admin, user);
-    }*/
+    }
 
     @Bean
     public UserDetailsService userDetailsService() {
         return new JdbcUserDetailsManager(dataSource);
-    }
+    }*/
 
     @Bean
     public PasswordEncoder passwordEncoder() {
