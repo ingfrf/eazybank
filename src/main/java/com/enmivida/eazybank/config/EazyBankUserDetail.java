@@ -1,22 +1,12 @@
 package com.enmivida.eazybank.config;
 
-import com.enmivida.eazybank.model.Customer;
-import com.enmivida.eazybank.repository.CustomerRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-
-@Service
-@RequiredArgsConstructor
-public class EazyBankUserDetail implements UserDetailsService {
-
-    private final CustomerRepository repository;
+//@Service
+//@RequiredArgsConstructor
+public class EazyBankUserDetail {//implements UserDetailsService {
+/**
+ *  Ya no es necesario al implementar EazyBankUsernamePwdAuthenticationProvider
+ * */
+   /* private final CustomerRepository repository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -35,5 +25,5 @@ public class EazyBankUserDetail implements UserDetailsService {
                     .authorities(new SimpleGrantedAuthority(customer.getRole()))
                     .build();
         }
-    }
+    }*/
 }
