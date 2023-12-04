@@ -8,8 +8,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
 
 import javax.sql.DataSource;
+import java.util.Collections;
 
 @Configuration
 @RequiredArgsConstructor
@@ -28,6 +30,21 @@ public class ProjectSecurityConfig {
                 .build()
         ;*/
         return httpSecurity
+                .cors().configurationSource(request -> {
+                    CorsConfiguration config = new CorsConfiguration();
+                    // origen permitido
+                    config.setAllowedOrigins(Collections.singletonList("http://192.168.1.111:8060"));
+                    // métodos GET POST PUT ...
+                    config.setAllowedMethods(Collections.singletonList("*"));
+                    config.setAllowCredentials(true);
+                    // se dejan pasar todas las cabeceras
+                    config.setAllowedHeaders(Collections.singletonList("*"));
+                    // esta configuracion sera valida un hora antes de volver a chequearla
+                    config.setMaxAge(3600L);
+                    return config;
+                })
+                // concatena diferentes configuraciones
+                .and()
                 .csrf().disable()
                 .authorizeHttpRequests(authz ->
                         authz
