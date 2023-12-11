@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 
 import javax.sql.DataSource;
@@ -29,8 +30,22 @@ public class ProjectSecurityConfig {
                 .and().httpBasic()
                 .build()
         ;*/
+        CsrfTokenRequestAttributeHandler requestAttributeHandler = new CsrfTokenRequestAttributeHandler();
+        // por defecto la clase se inicia con este nombre sin necesidad de setearlo
+        // pero se setea manualmente para que sea mas legible
+        requestAttributeHandler.setCsrfRequestAttributeName("_csrf");
+
         return httpSecurity
-                .cors().configurationSource(request -> {
+ /*
+                // dejamos que el framework autogestione el JSESSIONID
+                // si el valor fuese a true (que es el por defecto)
+                // habría que guardar las credenciales y gestionarlas en el SecurityContext
+                .securityContext(sc -> sc.requireExplicitSave(false))
+                // ya no es necesaria la página de login por defecto
+                // se va a generar un JSESSIONID cada vez se cree una sesion (login)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
+*/
+                .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
                     // origen permitido
                     config.setAllowedOrigins(Collections.singletonList("http://192.168.1.111:8060"));
@@ -42,10 +57,21 @@ public class ProjectSecurityConfig {
                     // esta configuracion sera valida un hora antes de volver a chequearla
                     config.setMaxAge(3600L);
                     return config;
+                }))
+/*
+                .csrf(csrf -> {
+                    csrf
+                            .csrfTokenRequestHandler(requestAttributeHandler)
+                            // no se aplica el csrf (notices no esta porque es un GET y no modifica datos)
+                            .ignoringRequestMatchers("/contact", "/register")
+                            // This configuration will set a XSRF-TOKEN cookie to the front end.
+                            // Because we set the HTTP-only flag to false, the front end will be able to retrieve this cookie using JavaScript.
+                            .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                    ;
                 })
-                // concatena diferentes configuraciones
-                .and()
-                .csrf().disable()
+                .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
+*/
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authz ->
                         authz
                                 .requestMatchers("/myAccount", "/myBalance", "/myLoans", "/myCards").authenticated()
